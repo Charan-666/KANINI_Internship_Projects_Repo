@@ -147,6 +147,29 @@ namespace WebApiFinalProject.Controllers
 
             return Ok(count);
         }
+
+
+             //dI
+     [HttpGet("lifetimes-demo")]
+     public IActionResult GetGuidDemo(
+ [FromServices] ISingletonGuidService singleton1,
+ [FromServices] ISingletonGuidService singleton2,
+ [FromServices] IScopedGuidService scoped1,
+ [FromServices] IScopedGuidService scoped2,
+ [FromServices] ITransientGuidService transient1,
+ [FromServices] ITransientGuidService transient2)
+     {
+         return Ok(new
+         {
+             Singleton1 = singleton1.GetGuid(),
+             Singleton2 = singleton2.GetGuid(),
+             Scoped1 = scoped1.GetGuid(),
+             Scoped2 = scoped2.GetGuid(),
+             Transient1 = transient1.GetGuid(),
+             Transient2 = transient2.GetGuid()
+         });
+     }
     }
 
 }
+
