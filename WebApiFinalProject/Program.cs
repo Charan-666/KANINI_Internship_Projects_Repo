@@ -91,7 +91,13 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
+builder.Services.AddSingleton<IGuidService, GuidService>();   // Singleton
+builder.Services.AddScoped<IGuidService, GuidService>();      // Scoped
+builder.Services.AddTransient<IGuidService, GuidService>();   // Transient
 
+builder.Services.AddSingleton<ISingletonGuidService, SingletonGuidService>();
+builder.Services.AddScoped<IScopedGuidService, ScopedGuidService>();
+builder.Services.AddTransient<ITransientGuidService, TransientGuidService>();
 
 
 var app = builder.Build();
