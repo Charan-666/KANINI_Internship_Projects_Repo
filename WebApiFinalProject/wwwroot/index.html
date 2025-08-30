@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+
+            .header h1 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+
+        .auth-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+            .main-content.active {
+                display: block;
+            }
+
+        .nav-tabs {
+            display: flex;
+            border-bottom: 2px solid #e1e5e9;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-tab {
+            background: none;
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+
+            .nav-tab:hover {
+                background: rgba(102, 126, 234, 0.1);
+                color: #667eea;
+            }
+
+            .nav-tab.active {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+            }
+
+        .tab-content {
+            display: none;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #333;
+            }
+
+            .form-group input, .form-group select, .form-group textarea {
+                width: 100%;
+                padding: 12px 15px;
+                border: 2px solid #e1e5e9;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: border-color 0.3s ease;
+            }
+
+                .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+                    outline: none;
+                    border-color: #667eea;
+                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+            .data-table th {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                padding: 15px 10px;
+                text-align: left;
+                font-weight: 600;
+            }
+
+            .data-table td {
+                padding: 12px 10px;
+                border-bottom: 1px solid #e1e5e9;
+            }
+
+            .data-table tbody tr:hover {
+                background: rgba(102, 126, 234, 0.05);
+            }
+
+        .search-filter-section {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+            .search-filter-section h3 {
+                margin-bottom: 15px;
+                color: #333;
+            }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #155724;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .alert-error {
+            background: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            .close:hover {
+                color: #000;
+            }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .data-table {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Vehicle Management System</h1>
+            <p>Manage Owners, Vehicles, Features & Users</p>
+        </div>
+
+        <!-- Authentication Section -->
+        <div class="auth-section" id="authSection">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <div class="user-info">
+                <span id="userInfo"></span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab(event, 'owners')">Owners</button>
+                <button class="nav-tab" onclick="showTab(event, 'vehicles')">Vehicles</button>
+                <button class="nav-tab" onclick="showTab(event, 'features')">Features</button>
+                <button class="nav-tab" onclick="showTab(event, 'users')">Users</button>
+            </div>
+
+            <!-- Owners Tab -->
+            <div id="owners" class="tab-content active">
+                <h2>Owners Management</h2>
+
+                <div class="search-filter-section">
+                    <h3>Search & Filter Owners</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Search by Name:</label>
+                            <input type="text" id="ownerSearchName" placeholder="Enter name">
+                        </div>
+                        <div class="form-group">
+                            <label>Min Age:</label>
+                            <input type="number" id="ownerMinAge" placeholder="Min age">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Age:</label>
+                            <input type="number" id="ownerMaxAge" placeholder="Max age">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="searchOwners()">Search</button>
+                    <button class="btn btn-secondary" onclick="filterOwners()">Filter</button>
+                    <button class="btn btn-secondary" onclick="loadOwners()">Show All</button>
+                    <button class="btn btn-success" onclick="countOwners()">Count All</button>
+                    <button class="btn btn-success" onclick="countOwnersConditional()">Count Conditional</button>
+                </div>
+
+                <button class="btn" onclick="showAddOwnerModal()" id="addOwnerBtn" style="display: none;">Add New Owner</button>
+
+                <div id="ownersLoading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading owners...</p>
+                </div>
+
+                <table class="data-table" id="ownersTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Age</th>
+                            <th>Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ownersTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Vehicles Tab -->
+            <div id="vehicles" class="tab-content">
+                <h2>Vehicles Management</h2>
+
+                <div class="search-filter-section">
+                    <h3>Search & Filter Vehicles</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Search by Model:</label>
+                            <input type="text" id="vehicleSearchModel" placeholder="Enter model">
+                        </div>
+                        <div class="form-group">
+                            <label>Filter by Make:</label>
+                            <input type="text" id="vehicleFilterMake" placeholder="Enter make">
+                        </div>
+                        <div class="form-group">
+                            <label>Filter by Date:</label>
+                            <input type="date" id="vehicleFilterDate">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="searchVehicles()">Search</button>
+                    <button class="btn btn-secondary" onclick="filterVehicles()">Filter</button>
+                    <button class="btn btn-secondary" onclick="loadVehicles()">Show All</button>
+                    <button class="btn btn-success" onclick="countVehicles()">Count All</button>
+                    <button class="btn btn-success" onclick="countVehiclesConditional()">Count Conditional</button>
+                </div>
+
+                <button class="btn" onclick="showAddVehicleModal()" id="addVehicleBtn" style="display: none;">Add New Vehicle</button>
+
+                <div id="vehiclesLoading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading vehicles...</p>
+                </div>
+
+                <table class="data-table" id="vehiclesTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Make</th>
+                            <th>Model</th>
+                            <th>Date</th>
+                            <th>Owner ID</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vehiclesTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Features Tab -->
+            <div id="features" class="tab-content">
+                <h2>Features Management</h2>
+
+                <div class="search-filter-section">
+                    <h3>Search & Filter Features</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Search by Name:</label>
+                            <input type="text" id="featureSearchName" placeholder="Enter feature name">
+                        </div>
+                        <div class="form-group">
+                            <label>Min Price:</label>
+                            <input type="number" id="featureMinPrice" placeholder="Min price">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Price:</label>
+                            <input type="number" id="featureMaxPrice" placeholder="Max price">
+                        </div>
+                        <div class="form-group">
+                            <label>Search Keyword:</label>
+                            <input type="text" id="featureKeyword" placeholder="Search in name/description">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="searchFeatures()">Search</button>
+                    <button class="btn btn-secondary" onclick="filterFeaturesByPrice()">Filter by Price</button>
+                    <button class="btn btn-secondary" onclick="loadFeatures()">Show All</button>
+                    <button class="btn btn-success" onclick="countFeatures()">Count All</button>
+                    <button class="btn btn-success" onclick="countFeaturesByKeyword()">Count by Keyword</button>
+                </div>
+
+                <button class="btn" onclick="showAddFeatureModal()" id="addFeatureBtn" style="display: none;">Add New Feature</button>
+
+                <div id="featuresLoading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading features...</p>
+                </div>
+
+                <table class="data-table" id="featuresTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="featuresTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="users" class="tab-content">
+                <h2>Users Management</h2>
+
+                <button class="btn" onclick="showAddUserModal()" id="addUserBtn" style="display: none;">Add New User</button>
+
+                <div id="usersLoading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading users...</p>
+                </div>
+
+                <table class="data-table" id="usersTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Owner Modal -->
+    <div id="addOwnerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addOwnerModal')">&times;</span>
+            <h2>Add New Owner</h2>
+            <form id="addOwnerForm">
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" id="ownerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="ownerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="number" id="ownerAge" required>
+                </div>
+                <div class="form-group">
+                    <label>Address:</label>
+                    <textarea id="ownerAddress" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn">Add Owner</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Vehicle Modal -->
+    <div id="addVehicleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addVehicleModal')">&times;</span>
+            <h2>Add New Vehicle</h2>
+            <form id="addVehicleForm">
+                <div class="form-group">
+                    <label>Make:</label>
+                    <input type="text" id="vehicleMake" required>
+                </div>
+                <div class="form-group">
+                    <label>Model:</label>
+                    <input type="text" id="vehicleModel" required>
+                </div>
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" id="vehicleDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Owner ID:</label>
+                    <input type="number" id="vehicleOwnerId" required>
+                </div>
+                <button type="submit" class="btn">Add Vehicle</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Feature Modal -->
+    <div id="addFeatureModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addFeatureModal')">&times;</span>
+            <h2>Add New Feature</h2>
+            <form id="addFeatureForm">
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" id="featureName" required>
+                </div>
+                <div class="form-group">
+                    <label>Price:</label>
+                    <input type="number" id="featurePrice" required>
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <textarea id="featureDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Vehicle ID:</label>
+                    <input type="number" id="featureVehicleId" required>
+                </div>
+                <button type="submit" class="btn">Add Feature</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addUserModal')">&times;</span>
+            <h2>Add New User</h2>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="userName" required>
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="userPassword" required>
+                </div>
+                <button type="submit" class="btn">Add User</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let authToken = '';
+        let currentUser = {};
+        const API_BASE = 'https://localhost:7252/api';
+
+        // Authentication functions
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/Token/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Login response:', data); // Debug log
+
+                    authToken = data.token;
+                    // Handle role object format from your API
+                    currentUser = {
+                        username: data.username,
+                        role: data.role?.name || data.role || 'user'
+                    };
+
+                    console.log('Current user:', currentUser); // Debug log
+
+                    document.getElementById('authSection').style.display = 'none';
+                    document.getElementById('mainContent').classList.add('active');
+                    document.getElementById('userInfo').textContent = `Welcome, ${currentUser.username} (${currentUser.role})`;
+
+                    // Update UI based on role
+                    updateUIBasedOnRole();
+
+                    // Load initial data
+                    loadOwners();
+
+                    showAlert('Login successful!', 'success');
+                } else {
+                    const errorText = await response.text();
+                    console.error('Login failed:', errorText);
+                    showAlert('Login failed. Please check your credentials.', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+                console.error('Login error:', error);
+            }
+        });
+
+        function logout() {
+            authToken = '';
+            currentUser = {};
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('mainContent').classList.remove('active');
+            document.getElementById('loginForm').reset();
+        }
+
+        // Role-based UI updates
+        function updateUIBasedOnRole() {
+            const isAdminUser = isAdmin();
+
+            // Show/hide add buttons based on role
+            document.getElementById('addOwnerBtn').style.display = isAdminUser ? 'inline-block' : 'none';
+            document.getElementById('addVehicleBtn').style.display = isAdminUser ? 'inline-block' : 'none';
+            document.getElementById('addFeatureBtn').style.display = isAdminUser ? 'inline-block' : 'none';
+            document.getElementById('addUserBtn').style.display = isAdminUser ? 'inline-block' : 'none';
+        }
+
+        function isAdmin() {
+            console.log('isAdmin check - currentUser:', currentUser); // Debug log
+            if (!currentUser || !currentUser.role) {
+                console.log('No user or role found'); // Debug log
+                return false;
+            }
+            // Handle different role data formats
+            const role = typeof currentUser.role === 'string' ? currentUser.role : String(currentUser.role);
+            const isAdminResult = role.toLowerCase() === 'admin';
+            console.log('Role check:', role, '-> isAdmin:', isAdminResult); // Debug log
+            return isAdminResult;
+        }
+
+        // Utility functions
+        function getAuthHeaders() {
+            return {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+
+            document.querySelector('.main-content').insertBefore(alertDiv, document.querySelector('.nav-tabs'));
+
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function showTab(event, tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to selected tab
+            event.target.classList.add('active');
+
+            // Load data for the selected tab
+            switch (tabName) {
+                case 'owners':
+                    loadOwners();
+                    break;
+                case 'vehicles':
+                    loadVehicles();
+                    break;
+                case 'features':
+                    loadFeatures();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+            }
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // OWNERS FUNCTIONS
+        async function loadOwners() {
+            const loading = document.getElementById('ownersLoading');
+            const table = document.getElementById('ownersTable');
+
+            loading.style.display = 'block';
+            table.style.display = 'none';
+
+            try {
+                console.log('Loading owners with token:', authToken ? 'Token exists' : 'No token'); // Debug
+                const response = await fetch(`${API_BASE}/Owner`, {
+                    headers: getAuthHeaders()
+                });
+
+                console.log('Owners response status:', response.status); // Debug
+
+                if (response.ok) {
+                    const owners = await response.json();
+                    console.log('Owners data:', owners); // Debug
+                    displayOwners(owners);
+                } else {
+                    const errorText = await response.text();
+                    console.error('Failed to load owners:', errorText);
+                    showAlert(`Failed to load owners: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                console.error('Network error loading owners:', error);
+                showAlert('Network error loading owners', 'error');
+            } finally {
+                loading.style.display = 'none';
+                table.style.display = 'table';
+            }
+        }
+
+        function displayOwners(owners) {
+            const tbody = document.getElementById('ownersTableBody');
+            tbody.innerHTML = '';
+
+            owners.forEach(owner => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>${owner.ownerId}</td>
+                        <td>${owner.name}</td>
+                        <td>${owner.email}</td>
+                        <td>${owner.age}</td>
+                        <td>${owner.address || 'N/A'}</td>
+                        <td>
+                            <button class="btn" onclick="editOwner(${owner.ownerId})">Edit</button>
+                            ${isAdmin() ? `<button class="btn btn-danger" onclick="deleteOwner(${owner.ownerId})">Delete</button>` : ''}
+                        </td>
+                    `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function searchOwners() {
+            const name = document.getElementById('ownerSearchName').value;
+            if (!name.trim()) {
+                showAlert('Please enter a name to search', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Owner/search?name=${encodeURIComponent(name)}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const owners = await response.json();
+                    displayOwners(owners);
+                    showAlert(`Found ${owners.length} owner(s)`, 'success');
+                } else {
+                    showAlert('No owners found matching the search', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error while searching owners', 'error');
+                console.error('Search owners error:', error);
+            }
+        }
+
+        async function filterOwners() {
+            const name = document.getElementById('ownerSearchName').value;
+            const minAge = document.getElementById('ownerMinAge').value;
+            const maxAge = document.getElementById('ownerMaxAge').value;
+
+            let query = [];
+            if (name) query.push(`name=${encodeURIComponent(name)}`);
+            if (minAge) query.push(`minAge=${minAge}`);
+            if (maxAge) query.push(`maxAge=${maxAge}`);
+
+            if (query.length === 0) {
+                showAlert('Please enter filter criteria', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Owner/filter?${query.join('&')}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const owners = await response.json();
+                    displayOwners(owners);
+                    showAlert(`Found ${owners.length} owner(s) matching filters`, 'success');
+                } else {
+                    showAlert('No owners found matching the filters', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error while filtering owners', 'error');
+                console.error('Filter owners error:', error);
+            }
+        }
+
+        async function countOwners() {
+            try {
+                const response = await fetch(`${API_BASE}/Owner/count`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const count = await response.json();
+                    showAlert(`Total owners: ${count}`, 'success');
+                } else {
+                    showAlert('Failed to count owners', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error counting owners', 'error');
+                console.error('Count owners error:', error);
+            }
+        }
+
+        async function countOwnersConditional() {
+            const name = document.getElementById('ownerSearchName').value;
+            const minAge = document.getElementById('ownerMinAge').value;
+            const maxAge = document.getElementById('ownerMaxAge').value;
+
+            let query = [];
+            if (name) query.push(`name=${encodeURIComponent(name)}`);
+            if (minAge) query.push(`minAge=${minAge}`);
+            if (maxAge) query.push(`maxAge=${maxAge}`);
+
+            if (query.length === 0) {
+                showAlert('Please enter criteria for conditional count', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Owner/count/conditional?${query.join('&')}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const count = await response.json();
+                    showAlert(`Conditional count: ${count} owners`, 'success');
+                } else {
+                    showAlert('Failed to get conditional count', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error getting conditional count', 'error');
+                console.error('Conditional count error:', error);
+            }
+        }
+
+        function showAddOwnerModal() {
+            if (!isAdmin()) {
+                showAlert('Only administrators can add owners', 'error');
+                return;
+            }
+            resetOwnerForm();
+            showModal('addOwnerModal');
+        }
+
+        document.getElementById('addOwnerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const ownerData = {
+                name: document.getElementById('ownerName').value,
+                email: document.getElementById('ownerEmail').value,
+                age: parseInt(document.getElementById('ownerAge').value),
+                address: document.getElementById('ownerAddress').value
+            };
+
+            const form = e.target;
+            const editId = form.dataset.editId;
+            const isEditing = !!editId;
+
+            try {
+                const url = isEditing ? `${API_BASE}/Owner/${editId}` : `${API_BASE}/Owner`;
+                const method = isEditing ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(ownerData)
+                });
+
+                if (response.ok) {
+                    showAlert(`Owner ${isEditing ? 'updated' : 'added'} successfully!`, 'success');
+                    closeModal('addOwnerModal');
+                    resetOwnerForm();
+                    loadOwners();
+                } else {
+                    showAlert(`Failed to ${isEditing ? 'update' : 'add'} owner`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Network error ${isEditing ? 'updating' : 'adding'} owner`, 'error');
+                console.error('Owner operation error:', error);
+            }
+        });
+
+        async function editOwner(id) {
+            console.log('Edit owner called, checking admin status...'); // Debug log
+            if (!isAdmin()) {
+                console.log('Not admin - blocking edit'); // Debug log
+                showAlert('Only administrators can edit owners', 'error');
+                return;
+            }
+
+            console.log('Admin check passed - proceeding with edit'); // Debug log
+            try {
+                const response = await fetch(`${API_BASE}/Owner/${id}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const owner = await response.json();
+
+                    // Populate modal with existing data
+                    document.getElementById('ownerName').value = owner.name;
+                    document.getElementById('ownerEmail').value = owner.email;
+                    document.getElementById('ownerAge').value = owner.age;
+                    document.getElementById('ownerAddress').value = owner.address || '';
+
+                    // Change modal title and form behavior for editing
+                    document.querySelector('#addOwnerModal h2').textContent = 'Edit Owner';
+                    const form = document.getElementById('addOwnerForm');
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    submitBtn.textContent = 'Update Owner';
+
+                    // Store the ID for update
+                    form.dataset.editId = id;
+
+                    showModal('addOwnerModal');
+                } else {
+                    showAlert('Error loading owner data for editing', 'error');
+                }
+            } catch (error) {
+                showAlert('Error loading owner data', 'error');
+                console.error('Edit owner error:', error);
+            }
+        }
+
+        function resetOwnerForm() {
+            const form = document.getElementById('addOwnerForm');
+            form.reset();
+            delete form.dataset.editId;
+            document.querySelector('#addOwnerModal h2').textContent = 'Add New Owner';
+            form.querySelector('button[type="submit"]').textContent = 'Add Owner';
+        }
+
+        async function deleteOwner(id) {
+            if (!isAdmin()) {
+                showAlert('Only administrators can delete owners', 'error');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this owner?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/Owner/${id}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    showAlert('Owner deleted successfully!', 'success');
+                    loadOwners();
+                } else {
+                    showAlert('Failed to delete owner', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error deleting owner', 'error');
+                console.error('Delete owner error:', error);
+            }
+        }
+
+        // VEHICLES FUNCTIONS
+        async function loadVehicles() {
+            const loading = document.getElementById('vehiclesLoading');
+            const table = document.getElementById('vehiclesTable');
+
+            loading.style.display = 'block';
+            table.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE}/Vehicle`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const vehicles = await response.json();
+                    displayVehicles(vehicles);
+                } else {
+                    showAlert('Failed to load vehicles', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error loading vehicles', 'error');
+                console.error('Load vehicles error:', error);
+            } finally {
+                loading.style.display = 'none';
+                table.style.display = 'table';
+            }
+        }
+
+        function displayVehicles(vehicles) {
+            const tbody = document.getElementById('vehiclesTableBody');
+            tbody.innerHTML = '';
+
+            vehicles.forEach(vehicle => {
+                const row = document.createElement('tr');
+                const formattedDate = vehicle.date ? new Date(vehicle.date).toLocaleDateString() : 'N/A';
+                row.innerHTML = `
+                        <td>${vehicle.vehicleId}</td>
+                        <td>${vehicle.make}</td>
+                        <td>${vehicle.model}</td>
+                        <td>${formattedDate}</td>
+                        <td>${vehicle.ownerId}</td>
+                        <td>
+                            <button class="btn" onclick="editVehicle(${vehicle.vehicleId})">Edit</button>
+                            ${isAdmin() ? `<button class="btn btn-danger" onclick="deleteVehicle(${vehicle.vehicleId})">Delete</button>` : ''}
+                        </td>
+                    `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function searchVehicles() {
+            const model = document.getElementById('vehicleSearchModel').value;
+            if (!model.trim()) {
+                showAlert('Please enter a model to search', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Vehicle/search?model=${encodeURIComponent(model)}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const vehicles = await response.json();
+                    displayVehicles(vehicles);
+                    showAlert(`Found ${vehicles.length} vehicle(s)`, 'success');
+                } else {
+                    showAlert('No vehicles found matching the search', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error while searching vehicles', 'error');
+                console.error('Search vehicles error:', error);
+            }
+        }
+
+        async function filterVehicles() {
+            const make = document.getElementById('vehicleFilterMake').value;
+            const model = document.getElementById('vehicleSearchModel').value;
+            const date = document.getElementById('vehicleFilterDate').value;
+
+            let query = [];
+            if (make) query.push(`make=${encodeURIComponent(make)}`);
+            if (model) query.push(`model=${encodeURIComponent(model)}`);
+            if (date) query.push(`date=${date}`);
+
+            if (query.length === 0) {
+                showAlert('Please enter filter criteria', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Vehicle/filter?${query.join('&')}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const vehicles = await response.json();
+                    displayVehicles(vehicles);
+                    showAlert(`Found ${vehicles.length} vehicle(s) matching filters`, 'success');
+                } else {
+                    showAlert('No vehicles found matching the filters', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error while filtering vehicles', 'error');
+                console.error('Filter vehicles error:', error);
+            }
+        }
+
+        async function countVehicles() {
+            try {
+                const response = await fetch(`${API_BASE}/Vehicle/count`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const count = await response.json();
+                    showAlert(`Total vehicles: ${count}`, 'success');
+                } else {
+                    showAlert('Failed to count vehicles', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error counting vehicles', 'error');
+                console.error('Count vehicles error:', error);
+            }
+        }
+
+        async function countVehiclesConditional() {
+            const make = document.getElementById('vehicleFilterMake').value;
+            const model = document.getElementById('vehicleSearchModel').value;
+            const date = document.getElementById('vehicleFilterDate').value;
+
+            let query = [];
+            if (make) query.push(`make=${encodeURIComponent(make)}`);
+            if (model) query.push(`model=${encodeURIComponent(model)}`);
+            if (date) query.push(`date=${date}`);
+
+            if (query.length === 0) {
+                showAlert('Please enter criteria for conditional count', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Vehicle/conditional-count?${query.join('&')}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const count = await response.json();
+                    showAlert(`Conditional count: ${count} vehicles`, 'success');
+                } else {
+                    showAlert('Failed to get conditional count', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error getting conditional count', 'error');
+                console.error('Conditional count error:', error);
+            }
+        }
+
+        function showAddVehicleModal() {
+            if (!isAdmin()) {
+                showAlert('Only administrators can add vehicles', 'error');
+                return;
+            }
+            resetVehicleForm();
+            showModal('addVehicleModal');
+        }
+
+        document.getElementById('addVehicleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const vehicleData = {
+                make: document.getElementById('vehicleMake').value,
+                model: document.getElementById('vehicleModel').value,
+                date: document.getElementById('vehicleDate').value,
+                ownerId: parseInt(document.getElementById('vehicleOwnerId').value)
+            };
+
+            const form = e.target;
+            const editId = form.dataset.editId;
+            const isEditing = !!editId;
+
+            try {
+                const url = isEditing ? `${API_BASE}/Vehicle/${editId}` : `${API_BASE}/Vehicle`;
+                const method = isEditing ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(vehicleData)
+                });
+
+                if (response.ok) {
+                    showAlert(`Vehicle ${isEditing ? 'updated' : 'added'} successfully!`, 'success');
+                    closeModal('addVehicleModal');
+                    resetVehicleForm();
+                    loadVehicles();
+                } else {
+                    showAlert(`Failed to ${isEditing ? 'update' : 'add'} vehicle`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Network error ${isEditing ? 'updating' : 'adding'} vehicle`, 'error');
+                console.error('Vehicle operation error:', error);
+            }
+        });
+
+        async function editVehicle(id) {
+            if (!isAdmin()) {
+                showAlert('Only administrators can edit vehicles', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Vehicle/${id}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const vehicle = await response.json();
+
+                    // Populate modal with existing data
+                    document.getElementById('vehicleMake').value = vehicle.make;
+                    document.getElementById('vehicleModel').value = vehicle.model;
+                    document.getElementById('vehicleDate').value = vehicle.date ? vehicle.date.split('T')[0] : '';
+                    document.getElementById('vehicleOwnerId').value = vehicle.ownerId;
+
+                    // Change modal title and form behavior for editing
+                    document.querySelector('#addVehicleModal h2').textContent = 'Edit Vehicle';
+                    const form = document.getElementById('addVehicleForm');
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    submitBtn.textContent = 'Update Vehicle';
+
+                    // Store the ID for update
+                    form.dataset.editId = id;
+
+                    showModal('addVehicleModal');
+                }
+            } catch (error) {
+                showAlert('Error loading vehicle data', 'error');
+            }
+        }
+
+        function resetVehicleForm() {
+            const form = document.getElementById('addVehicleForm');
+            form.reset();
+            delete form.dataset.editId;
+            document.querySelector('#addVehicleModal h2').textContent = 'Add New Vehicle';
+            form.querySelector('button[type="submit"]').textContent = 'Add Vehicle';
+        }
+
+        async function deleteVehicle(id) {
+            if (!isAdmin()) {
+                showAlert('Only administrators can delete vehicles', 'error');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this vehicle?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/Vehicle/${id}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    showAlert('Vehicle deleted successfully!', 'success');
+                    loadVehicles();
+                } else {
+                    showAlert('Failed to delete vehicle', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error deleting vehicle', 'error');
+                console.error('Delete vehicle error:', error);
+            }
+        }
+
+        // FEATURES FUNCTIONS
+        async function loadFeatures() {
+            const loading = document.getElementById('featuresLoading');
+            const table = document.getElementById('featuresTable');
+
+            loading.style.display = 'block';
+            table.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE}/Feature`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const features = await response.json();
+                    displayFeatures(features);
+                } else {
+                    showAlert('Failed to load features', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error loading features', 'error');
+                console.error('Load features error:', error);
+            } finally {
+                loading.style.display = 'none';
+                table.style.display = 'table';
+            }
+        }
+
+        function displayFeatures(features) {
+            const tbody = document.getElementById('featuresTableBody');
+            tbody.innerHTML = '';
+
+            features.forEach(feature => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>${feature.featureId}</td>
+                        <td>${feature.name}</td>
+                        <td>${feature.price}</td>
+                        <td>${feature.description || 'N/A'}</td>
+                        <td>
+                            <button class="btn" onclick="editFeature(${feature.featureId})">Edit</button>
+                            ${isAdmin() ? `<button class="btn btn-danger" onclick="deleteFeature(${feature.featureId})">Delete</button>` : ''}
+                        </td>
+                    `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function searchFeatures() {
+            const name = document.getElementById('featureSearchName').value;
+            if (!name.trim()) {
+                showAlert('Please enter a name to search', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Feature/search?name=${encodeURIComponent(name)}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const features = await response.json();
+                    displayFeatures(features);
+                    showAlert(`Found ${features.length} feature(s)`, 'success');
+                } else {
+                    showAlert('No features found matching the search', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error while searching features', 'error');
+                console.error('Search features error:', error);
+            }
+        }
+
+        async function filterFeaturesByPrice() {
+            const minPrice = document.getElementById('featureMinPrice').value;
+            const maxPrice = document.getElementById('featureMaxPrice').value;
+
+            let query = [];
+            if (minPrice) query.push(`minPrice=${minPrice}`);
+            if (maxPrice) query.push(`maxPrice=${maxPrice}`);
+
+            if (query.length === 0) {
+                showAlert('Please enter price criteria', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Feature/filter-by-price?${query.join('&')}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const features = await response.json();
+                    displayFeatures(features);
+                    showAlert(`Found ${features.length} feature(s) matching price range`, 'success');
+                } else {
+                    showAlert('No features found in the price range', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error while filtering features', 'error');
+                console.error('Filter features error:', error);
+            }
+        }
+
+        async function countFeatures() {
+            try {
+                const response = await fetch(`${API_BASE}/Feature/count`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const count = await response.json();
+                    showAlert(`Total features: ${count}`, 'success');
+                } else {
+                    showAlert('Failed to count features', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error counting features', 'error');
+                console.error('Count features error:', error);
+            }
+        }
+
+        async function countFeaturesByKeyword() {
+            const keyword = document.getElementById('featureKeyword').value;
+            if (!keyword.trim()) {
+                showAlert('Please enter a keyword', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Feature/count-by-keyword?keyword=${encodeURIComponent(keyword)}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const count = await response.json();
+                    showAlert(`Features with keyword "${keyword}": ${count}`, 'success');
+                } else {
+                    showAlert('Failed to count features by keyword', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error counting features by keyword', 'error');
+                console.error('Count features by keyword error:', error);
+            }
+        }
+
+        function showAddFeatureModal() {
+            if (!isAdmin()) {
+                showAlert('Only administrators can add features', 'error');
+                return;
+            }
+            resetFeatureForm();
+            showModal('addFeatureModal');
+        }
+
+        document.getElementById('addFeatureForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const featureData = {
+                name: document.getElementById('featureName').value,
+                price: parseFloat(document.getElementById('featurePrice').value),
+                description: document.getElementById('featureDescription').value,
+                vehicleId: parseInt(document.getElementById('featureVehicleId').value)
+            };
+
+            const form = e.target;
+            const editId = form.dataset.editId;
+            const isEditing = !!editId;
+
+            try {
+                const url = isEditing ? `${API_BASE}/Feature/${editId}` : `${API_BASE}/Feature`;
+                const method = isEditing ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(featureData)
+                });
+
+                if (response.ok) {
+                    showAlert(`Feature ${isEditing ? 'updated' : 'added'} successfully!`, 'success');
+                    closeModal('addFeatureModal');
+                    resetFeatureForm();
+                    loadFeatures();
+                } else {
+                    showAlert(`Failed to ${isEditing ? 'update' : 'add'} feature`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Network error ${isEditing ? 'updating' : 'adding'} feature`, 'error');
+                console.error('Feature operation error:', error);
+            }
+        });
+
+        async function editFeature(id) {
+            if (!isAdmin()) {
+                showAlert('Only administrators can edit features', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/Feature/${id}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const feature = await response.json();
+
+                    // Populate modal with existing data
+                    document.getElementById('featureName').value = feature.name;
+                    document.getElementById('featurePrice').value = feature.price;
+                    document.getElementById('featureDescription').value = feature.description || '';
+                    document.getElementById('featureVehicleId').value = feature.vehicleId;
+
+                    // Change modal title and form behavior for editing
+                    document.querySelector('#addFeatureModal h2').textContent = 'Edit Feature';
+                    const form = document.getElementById('addFeatureForm');
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    submitBtn.textContent = 'Update Feature';
+
+                    // Store the ID for update
+                    form.dataset.editId = id;
+
+                    showModal('addFeatureModal');
+                }
+            } catch (error) {
+                showAlert('Error loading feature data', 'error');
+            }
+        }
+
+        function resetFeatureForm() {
+            const form = document.getElementById('addFeatureForm');
+            form.reset();
+            delete form.dataset.editId;
+            document.querySelector('#addFeatureModal h2').textContent = 'Add New Feature';
+            form.querySelector('button[type="submit"]').textContent = 'Add Feature';
+        }
+
+        async function deleteFeature(id) {
+            if (!isAdmin()) {
+                showAlert('Only administrators can delete features', 'error');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this feature?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/Feature/${id}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    showAlert('Feature deleted successfully!', 'success');
+                    loadFeatures();
+                } else {
+                    showAlert('Failed to delete feature', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error deleting feature', 'error');
+                console.error('Delete feature error:', error);
+            }
+        }
+
+        // USERS FUNCTIONS
+        async function loadUsers() {
+            if (!isAdmin()) {
+                showAlert('Only administrators can view users', 'error');
+                return;
+            }
+
+            const loading = document.getElementById('usersLoading');
+            const table = document.getElementById('usersTable');
+
+            loading.style.display = 'block';
+            table.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE}/User`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const users = await response.json();
+                    displayUsers(users);
+                } else {
+                    showAlert('Failed to load users', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error loading users', 'error');
+                console.error('Load users error:', error);
+            } finally {
+                loading.style.display = 'none';
+                table.style.display = 'table';
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>${user.userId || user.id}</td>
+                        <td>${user.username}</td>
+                        <td>••••••••</td>
+                        <td>
+                            <button class="btn" onclick="editUser(${user.userId || user.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteUser(${user.userId || user.id})">Delete</button>
+                        </td>
+                    `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showAddUserModal() {
+            if (!isAdmin()) {
+                showAlert('Only administrators can add users', 'error');
+                return;
+            }
+            resetUserForm();
+            showModal('addUserModal');
+        }
+
+        document.getElementById('addUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userData = {
+                username: document.getElementById('userName').value,
+                password: document.getElementById('userPassword').value
+            };
+
+            const form = e.target;
+            const editId = form.dataset.editId;
+            const isEditing = !!editId;
+
+            try {
+                const url = isEditing ? `${API_BASE}/User/${editId}` : `${API_BASE}/User`;
+                const method = isEditing ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(userData)
+                });
+
+                if (response.ok) {
+                    showAlert(`User ${isEditing ? 'updated' : 'added'} successfully!`, 'success');
+                    closeModal('addUserModal');
+                    resetUserForm();
+                    loadUsers();
+                } else {
+                    showAlert(`Failed to ${isEditing ? 'update' : 'add'} user`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Network error ${isEditing ? 'updating' : 'adding'} user`, 'error');
+                console.error('User operation error:', error);
+            }
+        });
+
+        async function editUser(id) {
+            if (!isAdmin()) {
+                showAlert('Only administrators can edit users', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/User/${id}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+
+                    // Populate modal with existing data
+                    document.getElementById('userName').value = user.username;
+                    document.getElementById('userPassword').value = ''; // Don't show password
+
+                    // Change modal title and form behavior for editing
+                    document.querySelector('#addUserModal h2').textContent = 'Edit User';
+                    const form = document.getElementById('addUserForm');
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    submitBtn.textContent = 'Update User';
+
+                    // Store the ID for update
+                    form.dataset.editId = id;
+
+                    showModal('addUserModal');
+                }
+            } catch (error) {
+                showAlert('Error loading user data', 'error');
+            }
+        }
+
+        function resetUserForm() {
+            const form = document.getElementById('addUserForm');
+            form.reset();
+            delete form.dataset.editId;
+            document.querySelector('#addUserModal h2').textContent = 'Add New User';
+            form.querySelector('button[type="submit"]').textContent = 'Add User';
+        }
+
+        async function deleteUser(id) {
+            if (!isAdmin()) {
+                showAlert('Only administrators can delete users', 'error');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this user?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/User/${id}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+
+                if (response.ok) {
+                    showAlert('User deleted successfully!', 'success');
+                    loadUsers();
+                } else {
+                    showAlert('Failed to delete user', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error deleting user', 'error');
+                console.error('Delete user error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
