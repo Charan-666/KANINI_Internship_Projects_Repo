@@ -1,0 +1,33 @@
+<div [class.onSale]="products.onSale">    
+<h1>Products</h1>
+<p>ProductId : {{products.productId}}</p>
+<p>Product Name : {{products.productName}}</p>
+<p>Price : Rs.{{products.price}}</p>
+<p>Description : {{products.description}}</p>
+
+<button [disabled]="products.stock <=0">Buy Now</button>
+<button (click)="addToCart()">Add to Cart</button>
+<p>Cart Items: {{ShoppingCart.length}}</p>
+</div>
+
+<h1>User Profile</h1>
+<label>Name : 
+   <input [(ngModel)]="user.name"> 
+</label>
+<br><br>
+<label>Email : 
+   <input [(ngModel)]="user.email"> 
+</label>
+
+<h2>Live Preview</h2>
+<p>Name : {{user.name}}</p>
+<p>Email : {{user.email}}</p>
+
+<p [style.color]="products.rating>=4?'green':'red'">
+Rating : {{products.rating}}
+</p>
+
+<h4>Customer reviews</h4>
+<ul>
+    <li *ngFor="let r of products.reviews">{{r.user}} : {{r.comment}} </li>
+</ul>
