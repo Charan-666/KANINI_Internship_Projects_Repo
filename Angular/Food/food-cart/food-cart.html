@@ -1,0 +1,43 @@
+<h3>🛒 Food Cart</h3>
+
+@if (cartItems.length > 0) {
+  <ul class="list-group">
+    @for (item of cartItems; track $index) {
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+       {{ item.food?.name }} ({{ item.quantity }}) - ₹{{ (item.food?.price ?? 0) * item.quantity }}
+        <button class="btn btn-sm btn-danger" (click)="removeItem(item.id!)">Remove</button>
+      </li>
+    }
+  </ul>
+  <p class="mt-2 fw-bold">
+    Total: ₹{{ total}}
+  </p>
+  <button class="btn btn-warning mt-2" (click)="clearCart()">
+    Clear Cart
+  </button>
+} @else {
+  <p class="text-muted">Cart is empty.</p>
+}
+
+
+
+
+
+
+
+
+
+
+
+<!-- <h3>view cart🛒</h3>
+
+@for(item of foodservice.cart(); track $index){
+    <div>
+        <h6>{{item.Name}} - ₹{{item.price}} <button class="btn btn-sm btn-danger" (click)="foodservice.removefromcart(item.Id)">Remove</button></h6>
+         
+    </div>
+
+}
+<button class="btn btn-sm btn-danger" (click)="foodservice.clearcart()">clear cart</button>
+<br>
+Total Bill Price: <h1>{{total()}}</h1> -->

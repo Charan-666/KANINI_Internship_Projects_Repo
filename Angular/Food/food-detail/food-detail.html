@@ -1,0 +1,50 @@
+<h3>Food Detail</h3>
+@if (food){
+  <div class="card p-3">
+    <img src="{{food.imageurl}}" class="card-img-top" style="max-width:200px;">
+    <div class="card-body">
+      <h5>{{ food.name }}</h5>
+      <p>Category: {{ food.category }}</p>
+      <p>Price: ₹{{ food.price }}</p>
+      <button class="btn btn-sm btn-success" (click)="AddFood(food)">
+          Add to Cart
+        </button>
+     </div>
+  </div>
+}
+@else{
+   <p class="text-muted">select a food from the list</p>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <h3>selected food detail</h3>
+@if (selectedfood()){ 
+<div class="card" style="width: 18rem; ">
+ <img [src]="selectedfood()?.imageurl" class="card-img-top"  width="100" height="150"/>
+  <div class="card-body">
+    <h3 class="card-title">{{selectedfood()?.Name}}</h3>
+    <p class="card-text">Category: {{selectedfood()?.category}}</p>
+    <p class="card-text">Price: {{selectedfood()?.price}}</p>
+    <button class="btn btn-primary" (click)="Add(food)">Add to Cart</button>
+    
+</div>
+</div>
+}
+@else{
+    <p class="text-muted">select a food from the list</p>
+}
+
+<br><br>
+<hr> -->
