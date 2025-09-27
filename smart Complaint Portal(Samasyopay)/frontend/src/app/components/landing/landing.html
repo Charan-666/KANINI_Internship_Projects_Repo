@@ -1,0 +1,126 @@
+<!-- Login Dialog Overlay -->
+<div *ngIf="showLoginDialog" class="login-overlay" (click)="closeLoginDialog()">
+  <div class="login-dialog glass-effect" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closeLoginDialog()">❌</button>
+    <h3 class="gradient-text">Welcome to Samasyopay</h3>
+    <form (ngSubmit)="onLogin()" class="login-form">
+      <input type="email" [(ngModel)]="loginData.email" name="email" placeholder="Email" required>
+      <input type="password" [(ngModel)]="loginData.password" name="password" placeholder="Password" required>
+      <button type="submit" class="btn-primary">Login</button>
+      <button type="button" class="btn-secondary" (click)="navigateToRegister()">Register</button>
+    </form>
+  </div>
+</div>
+
+<!-- Main Landing Page -->
+<div class="landing-container">
+  <!-- Header -->
+  <header class="futuristic-header glass-effect">
+    <div class="header-content">
+      <div class="brand">
+        <h1 class="brand-title gradient-text">Samasyopay</h1>
+        <p class="brand-subtitle">Government Portal for Citizens</p>
+      </div>
+      <nav class="header-nav">
+        <a href="#services" class="nav-link">Services</a>
+        <a href="#schemes" class="nav-link">Schemes</a>
+        <a href="#contact" class="nav-link">Contact</a>
+        <button class="btn-login" (click)="showLoginDialog = true">Login</button>
+        <button class="btn-register" (click)="navigateToRegister()">Register</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Carousel -->
+  <section class="hero-carousel">
+    <div class="carousel-container">
+      <div *ngFor="let image of carouselImages; let i = index" 
+           class="carousel-slide" 
+           [class.active]="i === currentSlide">
+        <img [src]="image.src" [alt]="image.title" class="carousel-image">
+        <div class="carousel-overlay">
+          <h2 class="carousel-title">{{image.title}}</h2>
+          <p class="carousel-desc">{{image.desc}}</p>
+        </div>
+      </div>
+      
+      <button class="carousel-btn prev" (click)="prevSlide()">‹</button>
+      <button class="carousel-btn next" (click)="nextSlide()">›</button>
+      
+      <div class="carousel-indicators">
+        <button *ngFor="let image of carouselImages; let i = index" 
+                [class.active]="i === currentSlide"
+                (click)="goToSlide(i)"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Complaint Categories -->
+  <section id="services" class="categories-section">
+    <h2 class="section-title gradient-text">Service Categories</h2>
+    <div class="categories-grid">
+      <div *ngFor="let category of complaintCategories" class="category-card glass-effect">
+        <div class="card-icon">{{category.icon}}</div>
+        <h3 class="card-title">{{category.title}}</h3>
+        <p class="card-desc">{{category.desc}}</p>
+        <div class="card-gradient" [ngClass]="'bg-gradient-to-br ' + category.color"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Government Schemes Marquee -->
+  <section id="schemes" class="schemes-section">
+    <h2 class="section-title gradient-text">Government Schemes</h2>
+    <div class="schemes-container">
+      <div class="schemes-marquee">
+        <div *ngFor="let scheme of governmentSchemes" class="scheme-card glass-effect">
+          <marquee behavior="scroll" direction="left" scrollamount="3">{{scheme}}</marquee>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- YouTube Video Section -->
+  <section class="video-section">
+    <h2 class="section-title gradient-text">Learn More</h2>
+    <div class="video-container glass-effect">
+      <iframe 
+        src="https://www.youtube.com/embed/ZPUtA3W-7_I" 
+        title="Government Schemes Overview"
+        frameborder="0" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact" class="futuristic-footer glass-effect">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3 class="gradient-text">Samasyopay</h3>
+        <p>Empowering citizens through digital governance</p>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p>📧 support@samasyopay.gov.in</p>
+        <p>📞 1800-XXX-XXXX</p>
+      </div>
+      <div class="footer-section">
+        <h4>Legal</h4>
+        <p><a href="#">Privacy Policy</a></p>
+        <p><a href="#">Terms of Service</a></p>
+      </div>
+      <div class="footer-section">
+        <h4>Follow Us</h4>
+        <div class="social-links">
+          <a href="#">📘</a>
+          <a href="#">🐦</a>
+          <a href="#">📷</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Samasyopay. All rights reserved. Government of India</p>
+    </div>
+  </footer>
+</div>

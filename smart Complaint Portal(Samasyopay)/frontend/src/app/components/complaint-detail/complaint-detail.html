@@ -1,0 +1,262 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Header -->
+      <div class="d-flex align-items-center mb-4">
+        <button class="btn btn-outline-secondary me-3" (click)="goBack()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <div class="flex-grow-1">
+          <h2 class="fw-bold mb-1">Complaint Details</h2>
+          <p class="text-muted mb-0">View and manage your complaint</p>
+        </div>
+        <div *ngIf="userRole === 'Citizen' && complaint?.status === 0 && !isEditing" class="d-flex gap-2">
+          <button class="btn btn-outline-primary" (click)="toggleEdit()">
+            <i class="bi bi-pencil me-2"></i>Edit
+          </button>
+          <button class="btn btn-outline-danger" (click)="deleteComplaint()">
+            <i class="bi bi-trash me-2"></i>Delete
+          </button>
+        </div>
+        <div *ngIf="userRole === 'Agent' && isAgentUpdate && !isEditing" class="d-flex gap-2">
+          <button class="btn btn-outline-success" (click)="toggleEdit()">
+            <i class="bi bi-pencil-square me-2"></i>Update Status
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">Loading complaint details...</p>
+      </div>
+
+      <!-- Complaint Not Found -->
+      <div *ngIf="!loading && !complaint" class="text-center py-5">
+        <i class="bi bi-exclamation-triangle text-muted" style="font-size: 3rem;"></i>
+        <h6 class="text-muted mt-3 mb-2">Complaint not found</h6>
+        <p class="text-muted mb-3">The complaint you're looking for doesn't exist or you don't have access to it.</p>
+        <button class="btn btn-primary" (click)="goBack()">
+          <i class="bi bi-arrow-left me-2"></i>Back to Complaints
+        </button>
+      </div>
+
+      <!-- Complaint Details -->
+      <div *ngIf="!loading && complaint" class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="fw-bold mb-1">Complaint #{{ complaint.id }}</h5>
+              <small class="text-muted">Created on {{ formatDate(complaint.createdAt) }}</small>
+            </div>
+            <span [class]="getStatusClass(complaint.status)">
+              {{ getStatusText(complaint.status) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          <!-- View Mode -->
+          <div *ngIf="!isEditing">
+            <div class="row mb-4">
+              <div class="col-md-8">
+                <h6 class="fw-semibold text-muted mb-2">TITLE</h6>
+                <h4 class="mb-0">{{ complaint.title }}</h4>
+              </div>
+              <div class="col-md-4">
+                <h6 class="fw-semibold text-muted mb-2">TYPE</h6>
+                <span class="badge bg-light text-dark fs-6">
+                  {{ complaint.complaintType?.name || 'N/A' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h6 class="fw-semibold text-muted mb-2">DESCRIPTION</h6>
+              <p class="mb-0" style="white-space: pre-wrap;">{{ complaint.description }}</p>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="fw-semibold text-muted mb-2">CREATED</h6>
+                <p class="mb-0">{{ formatDate(complaint.createdAt) }}</p>
+              </div>
+              <div class="col-md-6">
+                <h6 class="fw-semibold text-muted mb-2">LAST UPDATED</h6>
+                <p class="mb-0">{{ formatDate(complaint.updatedAt) }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Citizen Edit Mode -->
+          <div *ngIf="isEditing && userRole === 'Citizen'">
+            <form (ngSubmit)="saveChanges()" #editForm="ngForm">
+              <div class="mb-3">
+                <label for="editTitle" class="form-label fw-semibold">Title *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="editTitle" 
+                  name="editTitle"
+                  [(ngModel)]="editData.title" 
+                  required 
+                  #title="ngModel"
+                  maxlength="200">
+                <div *ngIf="title.invalid && title.touched" class="text-danger small mt-1">
+                  Title is required
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="editType" class="form-label fw-semibold">Complaint Type *</label>
+                <select 
+                  class="form-select" 
+                  id="editType" 
+                  name="editType"
+                  [(ngModel)]="editData.complaintTypeId" 
+                  required 
+                  #type="ngModel">
+                  <option value="0">Select complaint type</option>
+                  <option *ngFor="let type of complaintTypes" [value]="type.id">
+                    {{ type.name }}
+                  </option>
+                </select>
+                <div *ngIf="type.invalid && type.touched" class="text-danger small mt-1">
+                  Please select a complaint type
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="editDescription" class="form-label fw-semibold">Description *</label>
+                <textarea 
+                  class="form-control" 
+                  id="editDescription" 
+                  name="editDescription"
+                  [(ngModel)]="editData.description" 
+                  required 
+                  #description="ngModel"
+                  rows="5"
+                  maxlength="1000"></textarea>
+                <div *ngIf="description.invalid && description.touched" class="text-danger small mt-1">
+                  Description is required
+                </div>
+              </div>
+
+
+
+              <!-- Error/Success Messages -->
+              <div *ngIf="error" class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+              </div>
+
+              <div *ngIf="success" class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ success }}
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-flex gap-2">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary"
+                  [disabled]="saving || editForm.invalid">
+                  <span *ngIf="saving" class="spinner-border spinner-border-sm me-2"></span>
+                  {{ saving ? 'Saving...' : 'Save Changes' }}
+                </button>
+                <button type="button" class="btn btn-outline-secondary" (click)="toggleEdit()">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Agent Status Update Mode -->
+          <div *ngIf="isEditing && userRole === 'Agent'">
+            <form (ngSubmit)="updateComplaintStatus()" #statusForm="ngForm">
+              <div class="mb-3">
+                <label for="status" class="form-label fw-semibold">Update Status *</label>
+                <select 
+                  class="form-select" 
+                  id="status" 
+                  name="status"
+                  [(ngModel)]="agentData.status" 
+                  required 
+                  #status="ngModel">
+                  <option value="1">Assigned</option>
+                  <option value="2">In Progress</option>
+                  <option value="3">Resolved</option>
+                  <option value="4">Rejected</option>
+                </select>
+              </div>
+
+              <div class="mb-4">
+                <label for="solutionFile" class="form-label fw-semibold">Solution Document (Optional)</label>
+                <input 
+                  type="file" 
+                  class="form-control" 
+                  id="solutionFile" 
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  (change)="onSolutionFileSelect($event)">
+                <div class="form-text">Upload solution document if resolving the complaint</div>
+              </div>
+
+              <!-- Error/Success Messages -->
+              <div *ngIf="error" class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+              </div>
+
+              <div *ngIf="success" class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ success }}
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-flex gap-2">
+                <button 
+                  type="submit" 
+                  class="btn btn-success"
+                  [disabled]="saving || statusForm.invalid">
+                  <span *ngIf="saving" class="spinner-border spinner-border-sm me-2"></span>
+                  {{ saving ? 'Updating...' : 'Update Status' }}
+                </button>
+                <button type="button" class="btn btn-outline-secondary" (click)="toggleEdit()">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents Section -->
+      <div *ngIf="!loading && complaint && complaint.complaintDocuments?.length" 
+           class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0">
+            <i class="bi bi-paperclip me-2"></i>Documents
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div *ngFor="let doc of complaint.complaintDocuments" class="col-md-6 mb-2">
+              <div class="d-flex align-items-center p-3 border rounded document-item">
+                <i [class]="getFileIcon(doc.fileName) + ' me-3 text-primary'" style="font-size: 1.5rem;"></i>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold">{{ doc.fileName }}</div>
+                  <small class="text-muted">
+                    <i class="bi bi-calendar3 me-1"></i>{{ formatDate(doc.uploadedAt) }}
+                  </small>
+                </div>
+                <button class="btn btn-outline-primary btn-sm" 
+                        (click)="downloadDocument(doc.id, doc.fileName)"
+                        title="Download {{ doc.fileName }}">
+                  <i class="bi bi-download"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

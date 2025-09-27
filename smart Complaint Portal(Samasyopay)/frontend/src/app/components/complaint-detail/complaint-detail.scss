@@ -1,0 +1,66 @@
+.card {
+  border-radius: 12px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.badge {
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.section-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.document-item {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.document-item:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+}
+
+.alert {
+  border-radius: 8px;
+  border: none;
+}
+
+.loading-state,
+.empty-state {
+  padding: 3rem 1rem;
+}
+
+.status-badge {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+}
+
+.detail-section {
+  margin-bottom: 2rem;
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}

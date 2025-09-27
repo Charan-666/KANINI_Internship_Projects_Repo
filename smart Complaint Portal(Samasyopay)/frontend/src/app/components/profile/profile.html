@@ -1,0 +1,133 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Header -->
+      <div class="mb-4">
+        <h2 class="fw-bold mb-1">My Profile</h2>
+        <p class="text-muted mb-0">Update your personal information</p>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">Loading profile...</p>
+      </div>
+
+      <!-- Profile Form -->
+      <div *ngIf="!loading" class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <!-- Current Profile Info -->
+          <div class="row mb-4">
+            <div class="col-md-3 text-center">
+              <div class="profile-photo-container mb-3">
+                <img *ngIf="profile?.photo" 
+                     [src]="'data:image/jpeg;base64,' + profile.photo" 
+                     class="profile-photo" 
+                     alt="Profile Photo">
+                <div *ngIf="!profile?.photo" class="profile-photo-placeholder">
+                  <i class="bi bi-person-circle" style="font-size: 5rem; color: #dee2e6;"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <h4 class="fw-bold mb-2">{{ profile?.user?.name || 'N/A' }}</h4>
+              <p class="text-muted mb-1">
+                <i class="bi bi-envelope me-2"></i>{{ profile?.user?.email || 'N/A' }}
+              </p>
+              <p class="text-muted mb-1">
+                <i class="bi bi-geo-alt me-2"></i>{{ profile?.address || 'No address provided' }}
+              </p>
+              <p class="text-muted mb-0">
+                <i class="bi bi-telephone me-2"></i>{{ profile?.phoneNumber || 'No phone number provided' }}
+              </p>
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <!-- Update Form -->
+          <form (ngSubmit)="onSubmit()" #profileForm="ngForm">
+            <h5 class="fw-semibold mb-3">Update Information</h5>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="address" class="form-label fw-semibold">Address</label>
+                <textarea 
+                  class="form-control" 
+                  id="address" 
+                  name="address"
+                  [(ngModel)]="profileData.address" 
+                  rows="3"
+                  placeholder="Enter your address"></textarea>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="phoneNumber" class="form-label fw-semibold">Phone Number</label>
+                <input 
+                  type="tel" 
+                  class="form-control" 
+                  id="phoneNumber" 
+                  name="phoneNumber"
+                  [(ngModel)]="profileData.phoneNumber" 
+                  placeholder="Enter your phone number">
+                
+                <label for="photo" class="form-label fw-semibold mt-3">Profile Photo</label>
+                <input 
+                  type="file" 
+                  class="form-control" 
+                  id="photo" 
+                  accept="image/*"
+                  (change)="onPhotoSelect($event)">
+                <div class="form-text">Upload a new profile picture (JPG, PNG)</div>
+              </div>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div *ngIf="error" class="alert alert-danger" role="alert">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+            </div>
+
+            <div *ngIf="success" class="alert alert-success" role="alert">
+              <i class="bi bi-check-circle-fill me-2"></i>{{ success }}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2">
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="saving">
+                <span *ngIf="saving" class="spinner-border spinner-border-sm me-2"></span>
+                {{ saving ? 'Updating...' : 'Update Profile' }}
+              </button>
+              <button type="button" class="btn btn-outline-secondary" (click)="loadProfile()">
+                Reset
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Account Info -->
+      <div *ngIf="!loading" class="card border-0 shadow-sm mt-4">
+        <div class="card-body p-4">
+          <h6 class="fw-semibold mb-3">
+            <i class="bi bi-info-circle me-2"></i>Account Information
+          </h6>
+          <div class="row">
+            <div class="col-md-6">
+              <small class="text-muted d-block">User ID</small>
+              <p class="mb-2">{{ profile?.userId || 'N/A' }}</p>
+            </div>
+            <div class="col-md-6">
+              <small class="text-muted d-block">Account Type</small>
+              <span class="badge bg-primary">Citizen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

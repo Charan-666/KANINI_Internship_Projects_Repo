@@ -1,0 +1,117 @@
+.dashboard-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 15px !important;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  .card-body {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #007bff, #28a745, #ffc107);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+  }
+  
+  &:hover .card-body::before {
+    opacity: 1;
+  }
+}
+
+.icon-wrapper {
+  .icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+  }
+}
+
+.dashboard-card:hover .icon-circle {
+  transform: scale(1.1);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.stat-item {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(248, 249, 250, 0.8);
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(248, 249, 250, 1);
+    transform: scale(1.05);
+  }
+}
+
+.stats-section {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 0;
+}
+
+.btn {
+  border-radius: 25px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Animation for cards on load
+.dashboard-card {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(30px);
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .dashboard-card {
+    margin-bottom: 20px;
+  }
+  
+  .icon-circle {
+    width: 60px !important;
+    height: 60px !important;
+    
+    i {
+      font-size: 2rem !important;
+    }
+  }
+}

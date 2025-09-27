@@ -1,0 +1,59 @@
+/* You can add global styles to this file, and also import other style files */
+
+// Global styles for Samasyopay landing page
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+}
+
+// Utility classes for gradients
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.from-blue-500 {
+  --tw-gradient-from: #3b82f6;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(59, 130, 246, 0));
+}
+
+.to-purple-600 {
+  --tw-gradient-to: #9333ea;
+}
+
+.from-green-500 {
+  --tw-gradient-from: #10b981;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(16, 185, 129, 0));
+}
+
+.to-teal-600 {
+  --tw-gradient-to: #0d9488;
+}
+
+.from-orange-500 {
+  --tw-gradient-from: #f97316;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(249, 115, 22, 0));
+}
+
+.to-red-600 {
+  --tw-gradient-to: #dc2626;
+}
+
+.from-purple-500 {
+  --tw-gradient-from: #8b5cf6;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(139, 92, 246, 0));
+}
+
+.to-pink-600 {
+  --tw-gradient-to: #db2777;
+}
+
+// Smooth scrolling
+html {
+  scroll-behavior: smooth;
+}

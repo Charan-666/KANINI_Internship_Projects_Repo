@@ -1,0 +1,49 @@
+.card {
+  border-radius: 12px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.badge {
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+.btn-close-sm {
+  font-size: 0.75rem;
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.file-item {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.help-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.character-count {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+}
+
+.alert {
+  border-radius: 8px;
+  border: none;
+}

@@ -1,0 +1,191 @@
+<div class="container py-4">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="fw-bold mb-1">{{ userRole === 'Citizen' ? 'My Complaints' : 'Assigned Complaints' }}</h2>
+          <p class="text-muted mb-0">{{ userRole === 'Citizen' ? 'Track and manage your submitted complaints' : 'Manage your assigned complaints' }}</p>
+        </div>
+        <a *ngIf="userRole === 'Citizen'" routerLink="/citizen/create-complaint" class="btn btn-primary">
+          <i class="bi bi-plus-circle me-2"></i>New Complaint
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input 
+              type="text" 
+              class="form-control border-start-0" 
+              placeholder="Search complaints..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <select class="form-select" [(ngModel)]="statusFilter" (change)="onStatusFilter()">
+            <option value="">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="InProgress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+            <i class="bi bi-x-circle me-1"></i>Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complaints List -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 py-3">
+      <h6 class="fw-semibold mb-0">
+        {{ filteredComplaints.length }} Complaint{{ filteredComplaints.length !== 1 ? 's' : '' }}
+        <span *ngIf="searchTerm || statusFilter" class="text-muted"> (filtered)</span>
+      </h6>
+    </div>
+    
+    <div class="card-body p-0">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">Loading complaints...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && filteredComplaints.length === 0 && !searchTerm && !statusFilter" 
+           class="text-center py-5">
+        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+        <h6 class="text-muted mt-3 mb-2">{{ userRole === 'Citizen' ? 'No complaints yet' : 'No complaints assigned' }}</h6>
+        <p class="text-muted mb-3">{{ userRole === 'Citizen' ? 'Start by creating your first complaint' : 'Complaints will appear here when assigned to you' }}</p>
+        <a *ngIf="userRole === 'Citizen'" routerLink="/citizen/create-complaint" class="btn btn-primary">
+          <i class="bi bi-plus-circle me-2"></i>Create Complaint
+        </a>
+      </div>
+
+      <!-- No Results State -->
+      <div *ngIf="!loading && filteredComplaints.length === 0 && (searchTerm || statusFilter)" 
+           class="text-center py-5">
+        <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+        <h6 class="text-muted mt-3 mb-2">No complaints found</h6>
+        <p class="text-muted mb-3">Try adjusting your search or filter criteria</p>
+        <button class="btn btn-outline-primary" (click)="clearFilters()">
+          <i class="bi bi-x-circle me-2"></i>Clear Filters
+        </button>
+      </div>
+
+      <!-- Complaints Table -->
+      <div *ngIf="!loading && filteredComplaints.length > 0" class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="border-0 fw-semibold">Complaint</th>
+              <th class="border-0 fw-semibold">Type</th>
+              <th class="border-0 fw-semibold">Status</th>
+              <th class="border-0 fw-semibold">Date</th>
+              <th class="border-0 fw-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let complaint of filteredComplaints">
+              <td class="align-middle">
+                <div class="fw-semibold mb-1">{{ complaint.title }}</div>
+                <small class="text-muted">
+                  {{ complaint.description | slice:0:80 }}{{ complaint.description.length > 80 ? '...' : '' }}
+                </small>
+              </td>
+              <td class="align-middle">
+                <span class="badge bg-light text-dark">
+                  {{ complaint.complaintType?.name || 'N/A' }}
+                </span>
+              </td>
+              <td class="align-middle">
+                <span [class]="getStatusClass(complaint.status)">{{ getStatusText(complaint.status) }}</span>
+              </td>
+              <td class="align-middle text-muted">
+                {{ formatDate(complaint.createdAt) }}
+              </td>
+              <td class="align-middle">
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-outline-primary" 
+                          [routerLink]="userRole === 'Citizen' ? ['/citizen/complaints', complaint.id] : ['/agent/complaints', complaint.id]">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button *ngIf="userRole === 'Citizen' && complaint.status === 0" 
+                          class="btn btn-outline-secondary" 
+                          [routerLink]="['/citizen/complaints', complaint.id, 'edit']">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button *ngIf="userRole === 'Agent' && (complaint.status === 1 || complaint.status === 2)" 
+                          class="btn btn-outline-success" 
+                          [routerLink]="['/agent/complaints', complaint.id, 'update']">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div *ngIf="!loading && complaints.length > 0" class="row mt-4">
+    <div class="col-md-3 mb-2">
+      <div class="card border-0 bg-warning bg-opacity-10">
+        <div class="card-body text-center py-3">
+          <h5 class="fw-bold text-warning mb-1">
+            {{ pendingCount }}
+          </h5>
+          <small class="text-muted">Pending</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-2">
+      <div class="card border-0 bg-info bg-opacity-10">
+        <div class="card-body text-center py-3">
+          <h5 class="fw-bold text-info mb-1">
+            {{ inProgressCount }}
+          </h5>
+          <small class="text-muted">In Progress</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-2">
+      <div class="card border-0 bg-success bg-opacity-10">
+        <div class="card-body text-center py-3">
+          <h5 class="fw-bold text-success mb-1">
+            {{ resolvedCount }}
+          </h5>
+          <small class="text-muted">Resolved</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-2">
+      <div class="card border-0 bg-primary bg-opacity-10">
+        <div class="card-body text-center py-3">
+          <h5 class="fw-bold text-primary mb-1">
+            {{ assignedCount }}
+          </h5>
+          <small class="text-muted">Assigned</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
